@@ -1,16 +1,47 @@
-import Note from './components/Note'
+import { useState } from 'react'
+import NoteList from './components/NoteList'
 
-const App = ({notes}) => (
-  <div>
-    <h1>Notes</h1>
-    <ul>
-      {notes.map(note => (
-        // `key` is NOT defined as a prop of Note! 
-        // It must be passed inside the elements returned by the callback of `map` (here, inside <Note>)
-          <Note key={note.id} note={note}/>
-      ))}
-    </ul>
-  </div>
-)
+const App = (props) => {
+  const [notes, setNotes] = useState(props.notes)
+  const [note, setNote] = useState('')
+  const [showAll, setShowAll] = useState(true)
+
+  const notesToShow = showAll ? notes : notes.filter(note => note.important)
+
+  const addNote = (e) => {
+    e.preventDefault()
+    const content = e.target.noteContent.value
+    const newNote = {
+      id: notes.length + 1,
+      content: content,
+      date: new Date().toISOString(),
+      important: Math.random() < 0.5
+    }
+    setNotes(notes.concat(newNote))
+    setNote('')
+  }
+
+  const handleNoteChange = (e) => {
+    setNote(e.target.value)
+  }
+
+  return (
+    <>
+      <button onClick={() => setShowAll(!showAll)}>
+        {showAll? "Show All" : "Show Only Important Notes"}
+      </button>
+      <NoteList notes={notesToShow} />
+      <form onSubmit={addNote}>
+        <input 
+          onChange={handleNoteChange}
+          value={note} 
+          name="noteContent" />
+        <button type="submit">
+          Add Note
+        </button>
+      </form>
+    </>
+  )
+}
 
 export default App
