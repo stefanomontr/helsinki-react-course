@@ -10,8 +10,8 @@ const Display = ({sides}) => {
 
 const initSides = (left, right) => ({left: left, right: right})
 
-const addLeft = (sides, setter) => () => setter(initSides(sides.left + 1, sides.right))
-const addRight = (sides, setter) => () => setter(initSides(sides.left, sides.right + 1))
+const addLeft = (sides, setter) => () => setter({...sides, left: sides.left + 1})
+const addRight = (sides, setter) => () => setter({...sides, right: sides.right + 1})
 
 const App = () => {
   const [sides, setSides] = useState(initSides(0, 0))
@@ -21,7 +21,6 @@ const App = () => {
       <Display 
         sides={sides}
       />
-      NEW
       <Button
         text="left"
         onClick={addLeft(sides, setSides)}
