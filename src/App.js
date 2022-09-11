@@ -1,60 +1,40 @@
-import { useState, useEffect } from 'react'
-import axios from 'axios'
-import NoteList from './components/NoteList'
+import { connect } from "react-redux"
+import { addNote, toggleImportanceOf } from "./redux/notes/operations"
 
-const App = () => {
-  const [notes, setNotes] = useState([])
-  const [note, setNote] = useState('')
-  const [showAll, setShowAll] = useState(true)
-
-  const hook = () => {
-    axios
-      .get('http://localhost:3001/notes')
-      .then(response => {
-        console.log('promise fulfilled')
-        setNotes(response.data)
-      })
-  }
-
-  useEffect(hook, [])
-  console.log('render', notes.length, 'notes')
-
-  const notesToShow = showAll ? notes : notes.filter(note => note.important)
-
-  const addNote = (e) => {
-    e.preventDefault()
-    const content = e.target.noteContent.value
-    const newNote = {
-      id: notes.length + 1,
-      content: content,
-      date: new Date().toISOString(),
-      important: Math.random() < 0.5
-    }
-    setNotes(notes.concat(newNote))
-    setNote('')
-  }
-
-  const handleNoteChange = (e) => {
-    setNote(e.target.value)
-  }
-
+const App = ({ notes, addNote, toggleImportanceOf }) => {
   return (
-    <>
-      <button onClick={() => setShowAll(!showAll)}>
-        {showAll? "Show All" : "Show Only Important Notes"}
-      </button>
-      <NoteList notes={notesToShow} />
+    <div>
       <form onSubmit={addNote}>
-        <input 
-          onChange={handleNoteChange}
-          value={note} 
-          name="noteContent" />
-        <button type="submit">
-          Add Note
-        </button>
+        <input name='note'/>
+        <button type='submit'>Add note</button>
       </form>
-    </>
+      Notes:
+      <ul>
+        {
+          notes.map(note => {
+            return (
+              <li key={note.id} onClick={() => toggleImportanceOf(note.id)}>
+                {note.content} : <strong>{note.important ? 'important' : ''}</strong>
+              </li>
+            )
+          })
+        }
+      </ul>
+    </div>
   )
 }
 
-export default App
+const mapStateToProps = (state) => {
+  return {
+    notes: state.notes
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addNote: (note) => dispatch(addNote(note)),
+    toggleImportanceOf: (noteId) => dispatch((toggleImportanceOf(noteId)))
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(App)

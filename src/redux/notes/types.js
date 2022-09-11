@@ -1,0 +1,4 @@
+const NEW_NOTE = 'state/notes/NEW_NOTE'
+const TOGGLE_IMPORTANCE = 'state/notes/TOGGLE_IMPORTANCE'
+
+export {NEW_NOTE, TOGGLE_IMPORTANCE}
