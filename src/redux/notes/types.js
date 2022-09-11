@@ -1,4 +1,5 @@
 const NEW_NOTE = 'state/notes/NEW_NOTE'
 const TOGGLE_IMPORTANCE = 'state/notes/TOGGLE_IMPORTANCE'
+const SET_FILTER = 'state/notes/SET_FILTER'
 
-export {NEW_NOTE, TOGGLE_IMPORTANCE}
+export {NEW_NOTE, TOGGLE_IMPORTANCE, SET_FILTER}

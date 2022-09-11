@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import Note from './Note'
 import { toggleImportanceOf } from '../redux/notes/operations'
+import { ALL_NOTES, ONLY_IMPORTANT, ONLY_UNIMPORTANT } from '../redux/notes/constants'
 
 /* 
 container component: the component implements a logic that determines 
@@ -10,7 +11,19 @@ Also, the container component knows the state of the store (through useSelector)
 */
 
 const NoteList = () => {
-  const notes = useSelector(state => state.notes)
+  const dispatch = useDispatch()
+  const noteFilter = useSelector(state => state.filter)
+  const notes = useSelector(state => {
+    switch (noteFilter) {
+      case ALL_NOTES:
+        return state.notes
+      case ONLY_IMPORTANT:
+        return state.notes.filter(note => note.important)
+      case ONLY_UNIMPORTANT:
+        return state.notes.filter(note => !note.important)
+      default: return []
+    }
+  })
   return (
     <div>
       <h1>Notes</h1>
@@ -20,7 +33,7 @@ const NoteList = () => {
             <Note 
               key={note.id} 
               note={note}
-              onClick={() => toggleImportanceOf(note.id)}
+              onClick={() => dispatch(toggleImportanceOf(note.id))}
             />
           ))
         }
