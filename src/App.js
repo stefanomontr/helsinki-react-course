@@ -1,40 +1,21 @@
-import { connect } from "react-redux"
-import { addNote, toggleImportanceOf } from "./redux/notes/operations"
+import NewNoteForm from "./components/NewNoteForm"
+import NoteList from "./components/NoteList"
 
-const App = ({ notes, addNote, toggleImportanceOf }) => {
+/* 
+Redux dispatch hook (i.e., useDispatch) allows access to the store from any component, 
+without the need to define state on the first common ancestor of stateful components:
+the ancestor was usually App, and then the state had to be passed on to child components 
+through props -> now the code of App is much cleaner and the state is directly accessed
+whithin NewNoteForm and NoteList!
+*/
+
+const App = () => {
   return (
     <div>
-      <form onSubmit={addNote}>
-        <input name='note'/>
-        <button type='submit'>Add note</button>
-      </form>
-      Notes:
-      <ul>
-        {
-          notes.map(note => {
-            return (
-              <li key={note.id} onClick={() => toggleImportanceOf(note.id)}>
-                {note.content} : <strong>{note.important ? 'important' : ''}</strong>
-              </li>
-            )
-          })
-        }
-      </ul>
+      <NewNoteForm/>
+      <NoteList/>
     </div>
   )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    notes: state.notes
-  }
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    addNote: (note) => dispatch(addNote(note)),
-    toggleImportanceOf: (noteId) => dispatch((toggleImportanceOf(noteId)))
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+export default App
