@@ -10,9 +10,7 @@ Also, the container component knows the state of the store (through useSelector)
 */
 
 const NoteList = () => {
-  const dispatch = useDispatch()
   const notes = useSelector(state => state.notes)
-
   return (
     <div>
       <h1>Notes</h1>
@@ -22,7 +20,7 @@ const NoteList = () => {
             <Note 
               key={note.id} 
               note={note}
-              onClick={() => dispatch(toggleImportanceOf(note.id))}
+              onClick={() => toggleImportanceOf(note.id)}
             />
           ))
         }

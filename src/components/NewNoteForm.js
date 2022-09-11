@@ -2,9 +2,8 @@ import { useDispatch } from 'react-redux'
 import { addNote } from '../redux/notes/operations'
 
 const NewNoteForm = () => {
-  const dispatch = useDispatch()
   return (
-    <form onSubmit={(e) => dispatch(addNote(e)) }>
+    <form onSubmit={addNote}>
       <input name='note'/>
       <button type='submit'>Add note</button>
     </form>
