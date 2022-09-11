@@ -2,14 +2,29 @@ import React from 'react'
 import { createStore } from 'redux'
 import ReactDOM from 'react-dom/client'
 
-const reducer = (state = 0, action) => {
+const initialState = {
+  notes: [
+    {
+      content: 'First default note',
+      important: true,
+      id: 1
+    }
+  ]
+}
+
+const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'increment':
-      return state + 1
-    case 'decrement':
-      return state - 1
-    case 'zero':
-      return 0
+    case 'NEW_NOTE':
+      return {
+        ...state,
+        notes: state.notes.concat(action.payload)
+      }
+    case 'TOGGLE_IMPORTANCE':
+      return {
+        ...state,
+        notes: state.notes.map(note =>
+          note.id === action.payload ? {...note, important: !note.important} : note)
+      }
     default:
       return state
   }
@@ -17,22 +32,47 @@ const reducer = (state = 0, action) => {
 
 const store = createStore(reducer)
 
+const generateId = () => Number((Math.random() * 1000000).toFixed(0))
+
+const addNote = (e) => {
+  e.preventDefault()
+  const newNote = {
+    content: e.target.note.value,
+    important: false,
+    id: generateId()
+  }
+  e.target.note.value = ''
+  store.dispatch({
+    type: 'NEW_NOTE',
+    payload: newNote
+  })
+}
+
+const toggleImportanceOf = (noteId) => {
+  store.dispatch({
+    type: 'TOGGLE_IMPORTANCE',
+    payload: noteId
+  })
+}
+
 const App = () => {
 
   return (
     <div>
-      <div>
-        State of the store: {store.getState()}
-      </div>
-      <div>
-        <button onClick={e => store.dispatch({type: 'increment'})}>Increment</button>
-      </div>
-      <div>
-        <button onClick={e => store.dispatch({type: 'decrement'})}>Decrement</button>
-      </div>
-      <div>
-        <button onClick={e => store.dispatch({type: 'zero'})}>Set to zero</button>
-      </div>
+      <form onSubmit={addNote}>
+        <input name='note'/>
+        <button type='submit'>Add note</button>
+      </form>
+      Notes:
+      <ul>
+        {store.getState().notes.map(note => {
+          return (
+            <li key={note.id} onClick={() => toggleImportanceOf(note.id)}>
+              {note.content} : <strong>{note.important ? 'important' : ''}</strong>
+            </li>
+          )
+        })}
+      </ul>
     </div>
   )
 }
@@ -46,6 +86,4 @@ const renderApp = () => {
 }
 
 renderApp()
-
 store.subscribe(renderApp)
-store.subscribe(() => console.log(store.getState()))
